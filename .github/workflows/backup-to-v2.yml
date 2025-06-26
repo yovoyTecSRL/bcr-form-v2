@@ -1,0 +1,24 @@
+name: Backup to bcr-form-v2 Repo
+
+on:
+  push:
+    branches:
+      - main
+      - bcr-form-v2
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar repo original
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Añadir repo de respaldo como remoto
+        run: git remote add backup https://yovoyTecSRL:${{ secrets.BACKUP_TOKEN }}@github.com/yovoyTecSRL/bcr-form-v2.git
+
+      - name: Hacer push a backup
+        run: |
+          git push backup main --force || true
+          git push backup bcr-form-v2 --force || true

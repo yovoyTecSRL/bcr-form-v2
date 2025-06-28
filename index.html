@@ -35,6 +35,8 @@
             <button onclick="mostrarGuiaChat()" class="menu-item">🤖 Guía con IA</button>
             <button onclick="ejecutarPruebasExhaustivas()" class="menu-item">🔬 Análisis IA</button>
             <button onclick="ejecutarPruebas()" class="menu-item">⚡ Pruebas Rápidas</button>
+            <a href="./tests-live" class="menu-item">🔍 Ver pruebas IA en tiempo real</a>
+            <button onclick="mostrarQAChat()" class="menu-item">💬 Conversar con el tester QA</button>
         </div>
     </div>
 
@@ -84,6 +86,35 @@
         </div>
     </div>
 
+    <!-- Modal para QA Chat -->
+    <div id="qaChatModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💬 Chat con el Tester QA</h3>
+                <span class="close" onclick="cerrarQAChat()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="qaChatContainer" class="qa-chat-container">
+                    <div class="message bot">
+                        <p>👋 ¡Hola! Soy el QA Tester del sistema BCR. Puedo ayudarte con:</p>
+                        <ul>
+                            <li>🧪 Análisis de pruebas automatizadas</li>
+                            <li>🔍 Explicación de fallos y rechazos</li>
+                            <li>📊 Métricas de rendimiento del sistema</li>
+                            <li>🔒 Aspectos técnicos de seguridad</li>
+                            <li>⚙️ Debugging y troubleshooting</li>
+                        </ul>
+                        <p>¿Qué te gustaría saber sobre las pruebas del sistema?</p>
+                    </div>
+                </div>
+                <form id="qaChatForm" class="qa-chat-form">
+                    <input type="text" id="qaChatInput" placeholder="Pregunta sobre pruebas, fallos, seguridad..." autocomplete="off" required />
+                    <button type="submit" id="qaSendBtn">Enviar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="tarjeta-demo">
             <div class="chip"></div>
@@ -93,8 +124,98 @@
             </div>
             <img src="https://cdn-icons-png.flaticon.com/512/196/196578.png" alt="Visa" width="38"/>
         </div>
-        <div class="chat" id="chat"></div>
-        <form id="chatForm">
+
+        <!-- Formulario paso a paso -->
+        <div id="formularioContainer">
+            <div id="paso1" class="form-step active">
+                <h3>📝 Paso 1: Datos Personales</h3>
+                <div class="form-group">
+                    <label for="nombre">Nombre Completo:</label>
+                    <input type="text" id="nombre" placeholder="Ej: Juan Carlos Pérez González" required />
+                    <small>Ingrese nombre(s) y dos apellidos</small>
+                </div>
+                <div class="form-group">
+                    <label for="cedula">Cédula de Identidad:</label>
+                    <input type="text" id="cedula" placeholder="123456789" maxlength="10" required />
+                    <small>9 o 10 dígitos sin guiones</small>
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="text" id="telefono" placeholder="88887777" maxlength="8" required />
+                    <small>8 dígitos, debe empezar con 2, 6, 7 u 8</small>
+                </div>
+                <button type="button" onclick="siguientePaso(1)" class="btn-primary">Siguiente →</button>
+            </div>
+
+            <div id="paso2" class="form-step">
+                <h3>📍 Paso 2: Dirección de Entrega</h3>
+                <div class="form-group">
+                    <label for="provincia">Provincia:</label>
+                    <select id="provincia" required>
+                        <option value="">Seleccione una provincia</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="canton">Cantón:</label>
+                    <select id="canton" required disabled>
+                        <option value="">Primero seleccione provincia</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="distrito">Distrito:</label>
+                    <input type="text" id="distrito" placeholder="Ej: Central, Carmen, etc." required />
+                    <small>Distrito específico donde reside</small>
+                </div>
+                <div class="form-group">
+                    <label for="direccionDetallada">Dirección Exacta:</label>
+                    <textarea id="direccionDetallada" placeholder="Ej: 200m sur del parque central, casa azul con portón negro" required></textarea>
+                    <small>Incluya señas específicas para la entrega</small>
+                </div>
+                <button type="button" onclick="anteriorPaso(2)" class="btn-secondary">← Anterior</button>
+                <button type="button" onclick="siguientePaso(2)" class="btn-primary">Siguiente →</button>
+            </div>
+
+            <div id="paso3" class="form-step">
+                <h3>🌍 Paso 3: Verificación GPS (Opcional)</h3>
+                <div class="gps-container">
+                    <h4>Validación de Ubicación</h4>
+                    <p>Para mayor precisión en la entrega, puede compartir su ubicación GPS</p>
+                    <div class="gps-actions">
+                        <button type="button" onclick="obtenerUbicacion()" class="gps-button">
+                            📍 Obtener mi ubicación
+                        </button>
+                        <button type="button" onclick="omitirGPS()" class="btn-outline">
+                            ⏭️ Omitir este paso
+                        </button>
+                    </div>
+                    <div id="gpsStatus" class="gps-status">
+                        <p>Presione "Obtener mi ubicación" para verificar que coincida con la dirección proporcionada</p>
+                    </div>
+                    <div id="gpsCoords" class="gps-coords" style="display: none;">
+                        <!-- Coordenadas se mostrarán aquí -->
+                    </div>
+                </div>
+                <button type="button" onclick="anteriorPaso(3)" class="btn-secondary">← Anterior</button>
+                <button type="button" onclick="siguientePaso(3)" class="btn-primary">Revisar Datos →</button>
+            </div>
+
+            <div id="paso4" class="form-step">
+                <h3>✅ Paso 4: Revisión y Envío</h3>
+                <div id="resumenDatos" class="resumen-datos">
+                    <!-- Resumen se generará dinámicamente -->
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="anteriorPaso(4)" class="btn-secondary">← Anterior</button>
+                    <button type="button" onclick="enviarFormulario()" class="btn-primary" id="btnEnviar">
+                        🚀 Enviar Solicitud
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Área de chat (se mantiene para depuración) -->
+        <div class="chat" id="chat" style="display: none;"></div>
+        <form id="chatForm" style="display: none;">
             <input type="text" id="input" placeholder="Escribe tu respuesta..." autocomplete="off" required />
             <button type="submit">Enviar</button>
         </form>
@@ -397,6 +518,662 @@
         
         function openReportWindow() {
             window.open('/reporte-pruebas', '_blank', 'width=500,height=700');
+        }
+
+        // Sistema de Chat QA
+        let qaChat = null;
+
+        function mostrarQAChat() {
+            document.getElementById('qaChatModal').style.display = 'block';
+            if (!qaChat) {
+                qaChat = new QAChat();
+            }
+        }
+
+        function cerrarQAChat() {
+            document.getElementById('qaChatModal').style.display = 'none';
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('qaChatModal');
+            if (event.target === modal) {
+                cerrarQAChat();
+            }
+        }
+
+        class QAChat {
+            constructor() {
+                this.chatContainer = document.getElementById('qaChatContainer');
+                this.form = document.getElementById('qaChatForm');
+                this.input = document.getElementById('qaChatInput');
+
+                this.init();
+            }
+
+            init() {
+                this.form.addEventListener('submit', (e) => this.handleQASubmit(e));
+            }
+
+            async handleQASubmit(e) {
+                e.preventDefault();
+                const message = this.input.value.trim();
+                if (!message) return;
+
+                this.addQAMessage(message, 'user');
+                this.input.value = '';
+
+                // Mostrar indicador de escritura
+                this.addQAMessage('El QA Tester está escribiendo...', 'bot typing');
+
+                try {
+                    const response = await fetch('/qa-chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: message })
+                    });
+
+                    const data = await response.json();
+
+                    // Remover indicador de escritura
+                    const typingMessages = this.chatContainer.querySelectorAll('.typing');
+                    typingMessages.forEach(msg => msg.remove());
+
+                    this.addQAMessage(data.response, 'bot');
+                } catch (error) {
+                    // Remover indicador de escritura
+                    const typingMessages = this.chatContainer.querySelectorAll('.typing');
+                    typingMessages.forEach(msg => msg.remove());
+
+                    this.addQAMessage('Lo siento, hubo un error. Por favor intenta de nuevo.', 'bot');
+                }
+            }
+
+            addQAMessage(text, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}`;
+                messageDiv.innerHTML = `<p>${text}</p>`;
+                this.chatContainer.appendChild(messageDiv);
+                this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
+            }
+        }
+
+        // ========================================
+        // SISTEMA DE FORMULARIO PASO A PASO
+        // ========================================
+        
+        let currentStep = 1;
+        let formData = {
+            nombre: '',
+            cedula: '',
+            telefono: '',
+            provincia: '',
+            canton: '',
+            distrito: '',
+            direccionDetallada: '',
+            latitud: null,
+            longitud: null
+        };
+
+        // Inicializar formulario al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProvincias();
+            updateProgressIndicator();
+        });
+
+        function siguientePaso(currentStepNum) {
+            if (validateStep(currentStepNum)) {
+                saveStepData(currentStepNum);
+                
+                // Ocultar paso actual
+                document.getElementById(`paso${currentStepNum}`).classList.remove('active');
+                
+                // Mostrar siguiente paso
+                currentStep = currentStepNum + 1;
+                document.getElementById(`paso${currentStep}`).classList.add('active');
+                
+                // Generar resumen si es el último paso
+                if (currentStep === 4) {
+                    generateResumen();
+                }
+                
+                updateProgressIndicator();
+            }
+        }
+
+        function anteriorPaso(currentStepNum) {
+            // Ocultar paso actual
+            document.getElementById(`paso${currentStepNum}`).classList.remove('active');
+            
+            // Mostrar paso anterior
+            currentStep = currentStepNum - 1;
+            document.getElementById(`paso${currentStep}`).classList.add('active');
+            
+            updateProgressIndicator();
+        }
+
+        function validateStep(stepNum) {
+            clearMessages();
+            
+            switch(stepNum) {
+                case 1:
+                    return validatePaso1();
+                case 2:
+                    return validatePaso2();
+                case 3:
+                    return validatePaso3();
+                default:
+                    return true;
+            }
+        }
+
+        function validatePaso1() {
+            let isValid = true;
+            
+            // Validar nombre
+            const nombre = document.getElementById('nombre').value.trim();
+            if (!nombre) {
+                showFieldError('nombre', 'El nombre es requerido');
+                isValid = false;
+            } else if (!validateNombre(nombre)) {
+                isValid = false;
+            } else {
+                showFieldSuccess('nombre');
+            }
+            
+            // Validar cédula
+            const cedula = document.getElementById('cedula').value.trim();
+            if (!cedula) {
+                showFieldError('cedula', 'La cédula es requerida');
+                isValid = false;
+            } else if (!validateCedula(cedula)) {
+                isValid = false;
+            } else {
+                showFieldSuccess('cedula');
+            }
+            
+            // Validar teléfono
+            const telefono = document.getElementById('telefono').value.trim();
+            if (!telefono) {
+                showFieldError('telefono', 'El teléfono es requerido');
+                isValid = false;
+            } else if (!validateTelefono(telefono)) {
+                isValid = false;
+            } else {
+                showFieldSuccess('telefono');
+            }
+            
+            return isValid;
+        }
+
+        function validatePaso2() {
+            let isValid = true;
+            
+            // Validar provincia
+            const provincia = document.getElementById('provincia').value;
+            if (!provincia) {
+                showFieldError('provincia', 'Debe seleccionar una provincia');
+                isValid = false;
+            } else {
+                showFieldSuccess('provincia');
+            }
+            
+            // Validar cantón
+            const canton = document.getElementById('canton').value;
+            if (!canton) {
+                showFieldError('canton', 'Debe seleccionar un cantón');
+                isValid = false;
+            } else {
+                showFieldSuccess('canton');
+            }
+            
+            // Validar distrito
+            const distrito = document.getElementById('distrito').value.trim();
+            if (!distrito) {
+                showFieldError('distrito', 'El distrito es requerido');
+                isValid = false;
+            } else {
+                showFieldSuccess('distrito');
+            }
+            
+            // Validar dirección detallada
+            const direccion = document.getElementById('direccionDetallada').value.trim();
+            if (!direccion || direccion.length < 10) {
+                showFieldError('direccionDetallada', 'La dirección debe tener al menos 10 caracteres con señas específicas');
+                isValid = false;
+            } else {
+                showFieldSuccess('direccionDetallada');
+            }
+            
+            return isValid;
+        }
+
+        function validatePaso3() {
+            // El paso 3 (GPS) es opcional, siempre es válido
+            return true;
+        }
+
+        function validateNombre(nombre) {
+            // Verificar longitud
+            if (nombre.length < 2 || nombre.length > 60) {
+                showFieldError('nombre', 'El nombre debe tener entre 2 y 60 caracteres');
+                return false;
+            }
+            
+            // Solo letras y espacios
+            if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) {
+                showFieldError('nombre', 'El nombre solo puede contener letras y espacios');
+                return false;
+            }
+            
+            // Detectar nombres repetitivos
+            const cleanName = nombre.replace(/\s/g, '');
+            if (/^(.)\1{4,}$/.test(cleanName) || /^([a-zA-Z]{1,3})\1{3,}$/.test(cleanName)) {
+                showFieldError('nombre', 'Por favor ingrese su nombre real, no caracteres repetitivos');
+                return false;
+            }
+            
+            // Detectar secuencias sin sentido
+            if (/^[qwrtypsdfghjklzxcvbnm]{5,}$/i.test(cleanName)) {
+                showFieldError('nombre', 'Por favor ingrese un nombre válido');
+                return false;
+            }
+            
+            // Al menos nombre y apellido
+            const palabras = nombre.split(/\s+/).filter(p => p.length > 0);
+            if (palabras.length < 2) {
+                showFieldError('nombre', 'Debe ingresar al menos nombre y apellido');
+                return false;
+            }
+            
+            // Verificar que no todas las palabras sean iguales
+            if (new Set(palabras.map(p => p.toLowerCase())).size === 1) {
+                showFieldError('nombre', 'Use nombres y apellidos diferentes');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function validateCedula(cedula) {
+            // Solo números
+            if (!/^\d+$/.test(cedula)) {
+                showFieldError('cedula', 'La cédula debe contener solo números');
+                return false;
+            }
+            
+            // Longitud 9-10 dígitos
+            if (cedula.length < 9 || cedula.length > 10) {
+                showFieldError('cedula', 'La cédula debe tener entre 9 y 10 dígitos');
+                return false;
+            }
+            
+            // Validación básica de dígito verificador para cédulas de 9 dígitos
+            if (cedula.length === 9) {
+                const digits = cedula.split('').map(Number);
+                const weights = [3, 7, 1, 3, 7, 1, 3, 7];
+                const checkSum = digits.slice(0, 8).reduce((sum, digit, index) => sum + digit * weights[index], 0) % 10;
+                const expectedCheck = (10 - checkSum) % 10;
+                
+                if (digits[8] !== expectedCheck) {
+                    showFieldError('cedula', 'El formato de cédula no es válido');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        function validateTelefono(telefono) {
+            // Solo números
+            if (!/^\d+$/.test(telefono)) {
+                showFieldError('telefono', 'El teléfono debe contener solo números');
+                return false;
+            }
+            
+            // 8 dígitos empezando con 2, 6, 7 u 8
+            if (!/^[2678]\d{7}$/.test(telefono)) {
+                showFieldError('telefono', 'El teléfono debe tener 8 dígitos y empezar con 2, 6, 7 u 8');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function showFieldError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            field.classList.add('error');
+            field.classList.remove('success');
+            
+            // Mostrar mensaje de error
+            let errorDiv = field.parentNode.querySelector('.error-message');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                field.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.textContent = message;
+        }
+
+        function showFieldSuccess(fieldId) {
+            const field = document.getElementById(fieldId);
+            field.classList.add('success');
+            field.classList.remove('error');
+            
+            // Remover mensaje de error si existe
+            const errorDiv = field.parentNode.querySelector('.error-message');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
+
+        function clearMessages() {
+            document.querySelectorAll('.error-message, .success-message, .warning-message').forEach(el => el.remove());
+        }
+
+        function saveStepData(stepNum) {
+            switch(stepNum) {
+                case 1:
+                    formData.nombre = document.getElementById('nombre').value.trim();
+                    formData.cedula = document.getElementById('cedula').value.trim();
+                    formData.telefono = document.getElementById('telefono').value.trim();
+                    break;
+                case 2:
+                    formData.provincia = document.getElementById('provincia').value;
+                    formData.canton = document.getElementById('canton').value;
+                    formData.distrito = document.getElementById('distrito').value.trim();
+                    formData.direccionDetallada = document.getElementById('direccionDetallada').value.trim();
+                    break;
+                case 3:
+                    // GPS data ya se guarda en obtenerUbicacion()
+                    break;
+            }
+        }
+
+        async function loadProvincias() {
+            try {
+                const response = await fetch('/provincias');
+                const data = await response.json();
+                
+                const select = document.getElementById('provincia');
+                select.innerHTML = '<option value="">Seleccione una provincia</option>';
+                
+                data.provincias.forEach(provincia => {
+                    const option = document.createElement('option');
+                    option.value = provincia;
+                    option.textContent = provincia;
+                    select.appendChild(option);
+                });
+                
+                // Event listener para cargar cantones
+                select.addEventListener('change', loadCantones);
+                
+            } catch (error) {
+                console.error('Error cargando provincias:', error);
+                showError('Error cargando provincias. Por favor recargue la página.');
+            }
+        }
+
+        async function loadCantones() {
+            const provincia = document.getElementById('provincia').value;
+            const cantonSelect = document.getElementById('canton');
+            
+            if (!provincia) {
+                cantonSelect.innerHTML = '<option value="">Primero seleccione provincia</option>';
+                cantonSelect.disabled = true;
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/cantones/${encodeURIComponent(provincia)}`);
+                const data = await response.json();
+                
+                cantonSelect.innerHTML = '<option value="">Seleccione un cantón</option>';
+                
+                data.cantones.forEach(canton => {
+                    const option = document.createElement('option');
+                    option.value = canton;
+                    option.textContent = canton;
+                    cantonSelect.appendChild(option);
+                });
+                
+                cantonSelect.disabled = false;
+                
+            } catch (error) {
+                console.error('Error cargando cantones:', error);
+                cantonSelect.innerHTML = '<option value="">Error cargando cantones</option>';
+            }
+        }
+
+        function obtenerUbicacion() {
+            const statusDiv = document.getElementById('gpsStatus');
+            const coordsDiv = document.getElementById('gpsCoords');
+            
+            if (!navigator.geolocation) {
+                statusDiv.innerHTML = '<p style="color: red;">❌ Su navegador no soporta geolocalización</p>';
+                return;
+            }
+            
+            statusDiv.innerHTML = '<p>📍 Obteniendo ubicación... <span class="loading-spinner"></span></p>';
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    formData.latitud = lat;
+                    formData.longitud = lng;
+                    
+                    statusDiv.innerHTML = '<p style="color: green;">✅ Ubicación obtenida correctamente</p>';
+                    
+                    coordsDiv.style.display = 'block';
+                    coordsDiv.innerHTML = `
+                        <h5>📍 Coordenadas GPS</h5>
+                        <p><strong>Latitud:</strong> ${lat.toFixed(6)}</p>
+                        <p><strong>Longitud:</strong> ${lng.toFixed(6)}</p>
+                        <p><em>Estas coordenadas se usarán para verificar que coincidan con la provincia y cantón seleccionados.</em></p>
+                    `;
+                },
+                (error) => {
+                    let message = '❌ Error obteniendo ubicación: ';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            message += 'Permiso denegado por el usuario';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            message += 'Ubicación no disponible';
+                            break;
+                        case error.TIMEOUT:
+                            message += 'Timeout obteniendo ubicación';
+                            break;
+                        default:
+                            message += 'Error desconocido';
+                            break;
+                    }
+                    
+                    statusDiv.innerHTML = `<p style="color: red;">${message}</p>`;
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        }
+
+        function omitirGPS() {
+            formData.latitud = null;
+            formData.longitud = null;
+            
+            const statusDiv = document.getElementById('gpsStatus');
+            statusDiv.innerHTML = '<p style="color: #666;">⏭️ Verificación GPS omitida. La entrega se realizará únicamente con la dirección proporcionada.</p>';
+            
+            const coordsDiv = document.getElementById('gpsCoords');
+            coordsDiv.style.display = 'none';
+        }
+
+        function generateResumen() {
+            const resumenDiv = document.getElementById('resumenDatos');
+            
+            resumenDiv.innerHTML = `
+                <h4>📋 Resumen de su solicitud</h4>
+                <div class="resumen-item">
+                    <span><strong>Nombre:</strong></span>
+                    <span>${formData.nombre}</span>
+                </div>
+                <div class="resumen-item">
+                    <span><strong>Cédula:</strong></span>
+                    <span>${formData.cedula}</span>
+                </div>
+                <div class="resumen-item">
+                    <span><strong>Teléfono:</strong></span>
+                    <span>${formData.telefono}</span>
+                </div>
+                <div class="resumen-item">
+                    <span><strong>Provincia:</strong></span>
+                    <span>${formData.provincia}</span>
+                </div>
+                <div class="resumen-item">
+                    <span><strong>Cantón:</strong></span>
+                    <span>${formData.canton}</span>
+                </div>
+                <div class="resumen-item">
+                    <span><strong>Distrito:</strong></span>
+                    <span>${formData.distrito}</span>
+                </div>
+                <div class="resumen-item">
+                    <span><strong>Dirección:</strong></span>
+                    <span>${formData.direccionDetallada}</span>
+                </div>
+                <div class="resumen-item">
+                    <span><strong>GPS:</strong></span>
+                    <span>${formData.latitud ? '✅ Verificado' : '⏭️ Omitido'}</span>
+                </div>
+            `;
+        }
+
+        async function enviarFormulario() {
+            const btnEnviar = document.getElementById('btnEnviar');
+            btnEnviar.disabled = true;
+            btnEnviar.innerHTML = '<span class="loading-spinner"></span> Enviando...';
+            
+            try {
+                const response = await fetch('/validar-formulario', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    if (result.status === 'APPROVED') {
+                        showSuccessResult(result);
+                    } else if (result.status === 'APPROVED_WITH_WARNINGS') {
+                        showWarningResult(result);
+                    } else {
+                        showErrorResult(result);
+                    }
+                } else {
+                    throw new Error(result.message || 'Error del servidor');
+                }
+                
+            } catch (error) {
+                console.error('Error enviando formulario:', error);
+                showError('Error enviando la solicitud. Por favor intente de nuevo.');
+            } finally {
+                btnEnviar.disabled = false;
+                btnEnviar.innerHTML = '🚀 Enviar Solicitud';
+            }
+        }
+
+        function showSuccessResult(result) {
+            const resumenDiv = document.getElementById('resumenDatos');
+            resumenDiv.innerHTML = `
+                <div class="success-card">
+                    <h3>🎉 ¡Solicitud Aprobada!</h3>
+                    <p>${result.message}</p>
+                    <div class="card-actions">
+                        <button onclick="window.location.reload()" class="btn-primary">Nueva Solicitud</button>
+                        <button onclick="mostrarQAChat()" class="btn-secondary">💬 Chat con QA</button>
+                        <a href="./tests-live" class="btn-outline">🔍 Ver Pruebas</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showWarningResult(result) {
+            const resumenDiv = document.getElementById('resumenDatos');
+            resumenDiv.innerHTML = `
+                <div class="warning-message">
+                    <h4>⚠️ Solicitud con Advertencias</h4>
+                    <p>${result.message}</p>
+                    <ul>
+                        ${result.validation_results.filter(v => !v.passed).map(v => `<li>${v.message}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        function showErrorResult(result) {
+            const resumenDiv = document.getElementById('resumenDatos');
+            resumenDiv.innerHTML = `
+                <div class="error-message">
+                    <h4>❌ Solicitud Rechazada</h4>
+                    <p>${result.message}</p>
+                    <ul>
+                        ${result.validation_results ? result.validation_results.filter(v => !v.passed).map(v => `<li>${v.message}</li>`).join('') : ''}
+                    </ul>
+                    <button onclick="currentStep = 1; document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active')); document.getElementById('paso1').classList.add('active'); updateProgressIndicator();" class="btn-primary">
+                        🔄 Corregir Datos
+                    </button>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            const container = document.querySelector('.container');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `❌ ${message}`;
+            container.insertBefore(errorDiv, container.firstChild);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        function updateProgressIndicator() {
+            // Agregar indicador de progreso si no existe
+            if (!document.querySelector('.progress-indicator')) {
+                const indicator = document.createElement('div');
+                indicator.className = 'progress-indicator';
+                indicator.innerHTML = `
+                    <div class="progress-step" data-step="1"></div>
+                    <div class="progress-step" data-step="2"></div>
+                    <div class="progress-step" data-step="3"></div>
+                    <div class="progress-step" data-step="4"></div>
+                `;
+                
+                const formularioContainer = document.getElementById('formularioContainer');
+                formularioContainer.insertBefore(indicator, formularioContainer.firstChild);
+            }
+            
+            // Actualizar estado de pasos
+            document.querySelectorAll('.progress-step').forEach((step, index) => {
+                const stepNum = index + 1;
+                step.classList.remove('completed', 'active');
+                
+                if (stepNum < currentStep) {
+                    step.classList.add('completed');
+                } else if (stepNum === currentStep) {
+                    step.classList.add('active');
+                }
+            });
         }
     </script>
 </body>

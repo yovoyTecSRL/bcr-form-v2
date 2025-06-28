@@ -1568,3 +1568,370 @@ body {
 .test-button {
     display: none;
 }
+
+/* Estilos para QA Chat */
+.qa-chat-container {
+    height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+}
+
+.qa-chat-container .message {
+    margin-bottom: 15px;
+    padding: 12px;
+    border-radius: 10px;
+    max-width: 85%;
+    word-wrap: break-word;
+    line-height: 1.5;
+}
+
+.qa-chat-container .message.bot {
+    background-color: #e3f2fd;
+    border: 1px solid #2196F3;
+    margin-right: auto;
+    border-radius: 15px 15px 15px 5px;
+}
+
+.qa-chat-container .message.user {
+    background-color: #f1f8e9;
+    border: 1px solid #4caf50;
+    margin-left: auto;
+    text-align: right;
+    border-radius: 15px 15px 5px 15px;
+}
+
+.qa-chat-container .message.typing {
+    background-color: #fff3e0;
+    border: 1px solid #ff9800;
+    animation: pulse 1.5s infinite;
+    font-style: italic;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+.qa-chat-container ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.qa-chat-container li {
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+.qa-chat-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.qa-chat-form input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.qa-chat-form input:focus {
+    border-color: #2196F3;
+}
+
+.qa-chat-form button {
+    background: linear-gradient(45deg, #2196F3, #21CBF3);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.3s;
+}
+
+.qa-chat-form button:hover {
+    transform: scale(1.05);
+}
+
+.qa-chat-form button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Estilos para formulario paso a paso */
+.form-step {
+    display: none;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 43, 127, 0.1);
+}
+
+.form-step.active {
+    display: block;
+    animation: slideIn 0.3s ease-in;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.form-step h3 {
+    color: #002b7f;
+    margin: 0 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e3eafc;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #002b7f;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e3eafc;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #1565c0;
+    box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
+}
+
+.form-group input.error,
+.form-group select.error,
+.form-group textarea.error {
+    border-color: #f44336;
+    background-color: #ffebee;
+}
+
+.form-group input.success,
+.form-group select.success,
+.form-group textarea.success {
+    border-color: #4caf50;
+    background-color: #e8f5e8;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 5px;
+    color: #666;
+    font-size: 0.85em;
+}
+
+.form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-outline {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #002b7f, #1565c0);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #1565c0, #42a5f5);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 43, 127, 0.3);
+}
+
+.btn-secondary {
+    background: #f5f5f5;
+    color: #666;
+    border: 2px solid #e0e0e0;
+}
+
+.btn-secondary:hover {
+    background: #eeeeee;
+    border-color: #bdbdbd;
+}
+
+.btn-outline {
+    background: transparent;
+    color: #002b7f;
+    border: 2px solid #002b7f;
+}
+
+.btn-outline:hover {
+    background: #002b7f;
+    color: white;
+}
+
+.error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border-left: 4px solid #f44336;
+    font-size: 0.9em;
+}
+
+.success-message {
+    background: #e8f5e8;
+    color: #2e7d32;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border-left: 4px solid #4caf50;
+    font-size: 0.9em;
+}
+
+.warning-message {
+    background: #fff3e0;
+    color: #ef6c00;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border-left: 4px solid #ff9800;
+    font-size: 0.9em;
+}
+
+.resumen-datos {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #e3eafc;
+    margin-bottom: 20px;
+}
+
+.resumen-datos h4 {
+    color: #002b7f;
+    margin: 0 0 15px 0;
+}
+
+.resumen-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.resumen-item:last-child {
+    border-bottom: none;
+}
+
+.resumen-item strong {
+    color: #002b7f;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #002b7f;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Estilos responsive para formulario */
+@media (max-width: 600px) {
+    .form-step {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 10px;
+        font-size: 16px; /* Previene zoom en iOS */
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn-primary,
+    .btn-secondary,
+    .btn-outline {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+/* Indicador de progreso del formulario */
+.progress-indicator {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    padding: 0 20px;
+}
+
+.progress-step {
+    width: 25%;
+    height: 4px;
+    background: #e3eafc;
+    margin: 0 2px;
+    border-radius: 2px;
+    transition: background 0.3s ease;
+}
+
+.progress-step.completed {
+    background: #4caf50;
+}
+
+.progress-step.active {
+    background: #002b7f;
+}
